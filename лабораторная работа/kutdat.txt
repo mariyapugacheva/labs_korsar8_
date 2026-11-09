@@ -1,0 +1,55 @@
+FORMAT = 7;
+
+BEGIN
+  OUT RESULT_THETA.DAT;
+  OUT RESULT_SIN.DAT;
+  OUT RESULT_Q.DAT;
+  OUT RESULT_T.DAT;
+END
+END
+
+! ============================================================
+! Файл 1: безразмерные профили theta(eta, Fo)
+!   - MODE=0: theta = (T - T_F)/(T_0 - T_F), стремится к 0
+!   - MODE=1: theta = (T - T_0)/A_IN, колеблется около 0
+! ============================================================
+OUTPUT RESULT_THETA.DAT
+IF FIRST THEN
+  FIRST = 0;
+  WRITE1 'TAU  Fo  theta_1 ... theta_21'
+ENDIF
+WRITE FO_VAL, THETA(1:21);
+END
+
+! ============================================================
+! Файл 2: входной сигнал и отклик в центре (для АЧХ/ФЧХ)
+! ============================================================
+OUTPUT RESULT_SIN.DAT
+IF FIRST THEN
+  FIRST = 0;
+  WRITE1 'TAU  T_ENV_IN(K)  T_C(K)  T_W(K)  Q_surf(W/m2)'
+ENDIF
+WRITE T_ENV_IN, T_C, T_W, Q_SURF;
+END
+
+! ============================================================
+! Файл 3: поток и энергия (для проверки баланса на скачке)
+! ============================================================
+OUTPUT RESULT_Q.DAT
+IF FIRST THEN
+  FIRST = 0;
+  WRITE1 'TAU  T_W(K)  Q_surf(W/m2)  Q_lin(W/m)  E_acc(J/m)'
+ENDIF
+WRITE T_W, Q_SURF, Q_LIN, E_ACC;
+END
+
+! ============================================================
+! Файл 4: размерные температуры T(r,t), К
+! ============================================================
+OUTPUT RESULT_T.DAT
+IF FIRST THEN
+  FIRST = 0;
+  WRITE1 'TAU  T_1..T_21(K)  T_wall'
+ENDIF
+WRITE T.HCS1(1:21,1), T_W;
+END
